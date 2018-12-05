@@ -1,5 +1,5 @@
-//Classe para a estrutura do jogo, contem todas as variaveis funcionais para o jogo: Bomba, flag, ativação de coordenadas e a quantidade de bombas
-//Possui somente gets e sets (Quase uma struct)
+
+
 public class EstruturaJogo{
     private boolean bomba;
     private boolean flag ;

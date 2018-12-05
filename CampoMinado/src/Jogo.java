@@ -1,23 +1,23 @@
-//Função principal do programa, cerebro!
 public class Jogo{
-    private EstruturaJogo[][] jogo; //Matriz do jogo
-    private int jogadas = 0;//Contador de Jogadas (descontinuado) 
-    private int contBomba; //Contador de bombas
+    private EstruturaJogo[][] jogo;
+    private int jogadas = 0;
+    private int contBomba;
  
-    public Jogo(int sizex, int sizey){ //Incializacao da matriz
+    public Jogo(int sizex, int sizey){
         jogo = new EstruturaJogo[sizex][sizey];
         for(int i=0; i<sizex; i++)
             for(int j=0; j<sizey; j++)
                 jogo[i][j]= new EstruturaJogo();
     }
  
-    public void preProcessamento(int sizex, int sizey, int bomba) { //Inserçao de bombas de forma randomica
+    public void preProcessamento(int sizex, int sizey, int bomba) {
         int contador = bomba;
         contBomba = bomba;
 
         while (contador != 0) {
             int x = (int) (Math.random() * (sizex));
             int y = (int) (Math.random() * (sizey));
+            System.out.println(x + " " + y+" "+contador);
 	        if (!jogo[x][y].getBomba()) {
 	           jogo[x][y].setBomba();
 	           contador--;
@@ -29,7 +29,7 @@ public class Jogo{
         print();
     }
  
-    private  void zerarContadorEmBombas(int sizex, int sizey){ //Zera todos os contadores de bomba se a coordenada nao tiver bomba
+    private  void zerarContadorEmBombas(int sizex, int sizey){
         for (int i = 0; i < sizex; i++) {
             for (int j = 0; j < sizey; j++) {
                 if (!jogo[i][j].getBomba())
@@ -39,13 +39,14 @@ public class Jogo{
         }
     }
  
-    private void contagemBombas(int sizex, int sizey){ //Realiza a contagem de bombas ao redor de uma determinada coordenada
+    private void contagemBombas(int sizex, int sizey){
         for (int i = 0; i < sizex; i++) {
             for (int j = 0; j < sizey; j++) {
-                if (!jogo[i][j].getBomba()) 
+                if (!jogo[i][j].getBomba())
                     continue;
-                
-              //Se tiver bombas olha nas coordenadas ao seu redor para aumentar a quantidade de bombas
+ 
+                System.out.println(i + " " + j + " " + sizex + " " + jogo[i][j].getBomba());
+ 
                 if (i != (sizex - 1)) {
                     jogo[i + 1][j].setQuantidadeBombas();
                     if(i!=0)
@@ -101,12 +102,11 @@ public class Jogo{
         }
     }
  
-    //Funca que imprime a tabela (DEBUGGACAO)
     public void print(){
         System.out.println("Jogadas: "+jogadas);
         System.out.println("Contador Bomba: "+contBomba);
-        for(int j=0; j<jogo.length; j++){
-            for(int i=0; i<jogo.length; i++){
+        for(int i=0; i<jogo.length; i++){
+            for(int j=0; j<jogo.length; j++){
                 if(!jogo[i][j].getAtivacao() && !jogo[i][j].getBomba())
                     System.out.printf("%d  |  ",jogo[i][j].getQuantidadeBombas());
                 else if(jogo[i][j].getFlag())
@@ -120,7 +120,6 @@ public class Jogo{
         }
     }
     
-    //Getters
     public boolean getAtivacao(int x, int y) {
     	return jogo[x][y].getAtivacao();
     }
@@ -140,25 +139,23 @@ public class Jogo{
     public int getContBomba() {
     	return contBomba;
     }
-    
-    //Funcao responsavel pelo jogo
     public boolean play(int cordX, int cordY){
         jogadas++;
-        if(!jogo[cordX][cordY].getAtivacao() && !jogo[cordX][cordY].getFlag()){ //Se nao estiver ativado ou com flag, pode ser aberto
-            if(jogo[cordX][cordY].getBomba()) { //Verifica se tem bomba
+        if(!jogo[cordX][cordY].getAtivacao() && !jogo[cordX][cordY].getFlag()){
+            if(jogo[cordX][cordY].getBomba()) {
                 jogo[cordX][cordY].setAtivacao();
-                return true; //Fim de jogo
-            }else if(jogo[cordX][cordY].getQuantidadeBombas()!=0){ //Mostra a quantidade de bombas ao redor
+                return true;
+            }else if(jogo[cordX][cordY].getQuantidadeBombas()!=0){
                 jogo[cordX][cordY].setAtivacao();
                 return false;
             }else{
-                expansao(cordX, cordY); //Se for zero, expande
+                expansao(cordX, cordY);
             }
         }
-        return false; //Show de Bola, o show continua
+        return false;
     }
  
-    public void expansao(int cordX, int cordY){ //Expansao de forma recursiva
+    public void expansao(int cordX, int cordY){
         try {
             if (jogo[cordX][cordY].getQuantidadeBombas() != 0) {
                 jogo[cordX][cordY].setAtivacao();
@@ -172,17 +169,12 @@ public class Jogo{
                 expansao((cordX),(1+cordY));
                 expansao(cordX,(cordY-1));
                 expansao((cordX-1),cordY);
-                
-                expansao((1+cordX),cordY+1);
-                expansao((cordX-1),(1+cordY));
-                expansao(cordX-1,(cordY-1));
-                expansao((cordX+1),cordY-1);
         }catch (java.lang.ArrayIndexOutOfBoundsException exc){
             return;
         }
     }
  
-    public void flag(int cordX, int cordY){ //Funcao para colocar uma flag em uma posicao
+    public void flag(int cordX, int cordY){
         jogadas++;
         if(!jogo[cordX][cordY].getFlag()) {
 	        if(contBomba!=0) {
@@ -194,8 +186,7 @@ public class Jogo{
     		jogo[cordX][cordY].unsetFlag();
     	}
     }
-    
-    public void aberturaGeral(int x, int y) { //Funcao de ativação geral quando o jogo acaba
+    public void derrota(int x, int y) {
     	for(int i=0; i<y; i++) {
     		for(int j=0;j<y;j++) {
     			if(!jogo[i][j].getFlag())
@@ -204,7 +195,7 @@ public class Jogo{
     	}
     }
     
-    public boolean verificacao(int sizex, int sizey, int bombas){ //Verifica se o jogo esta ganho
+    public boolean verificacao(int sizex, int sizey, int bombas){
         int cont=0;
  
         for(int i=0; i<jogo.length; i++){

@@ -2,7 +2,6 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Tabuleiro {
-	//Variaveis para imagens
 	private BufferedImage box;
 	private BufferedImage openedBox;
 	private BufferedImage flagImg;
@@ -27,20 +26,15 @@ public class Tabuleiro {
 	private BufferedImage num0;
 	private BufferedImage encima;
 	private BufferedImage flagImgEncima;
-	private BufferedImage vazio;
-	private BufferedImage BombaFalse;
-	//Coordenadas
 	private int x;
 	private int y;
-	//Auxiliares para formaçao da tela
 	public int yAux = 155;
 	public int xAux = 42;
 	
-	public Tabuleiro(int x, int y, int dimLargTela, int dimAltTela) { //Construtor que armazena as coordenadas e as imagens
+	public Tabuleiro(int x, int y, int dimLargTela, int dimAltTela) {
 		this.x = x; this.y = y;
 		box = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/normal.png"), dimLargTela, dimAltTela);
 		openedBox = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/pressed.png"), dimLargTela, dimAltTela);
-		vazio = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/pressedEmpty.png"), dimLargTela, dimAltTela);
 		flagImg = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/flag.png"), dimLargTela, dimAltTela);
 		bombImg = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/bomb.png"), dimLargTela, dimAltTela);
 		numero1 = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/number1.png"), dimLargTela, dimAltTela);
@@ -63,10 +57,9 @@ public class Tabuleiro {
 		num0 = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/B0.png"), dimLargTela - 5, dimAltTela - 5);
 		encima = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/encima.png"), dimLargTela + 10, dimAltTela + 10);
 		flagImgEncima = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/FlagEncima.png"), dimLargTela + 10, dimAltTela + 10);
-		BombaFalse = GerenciadorImagens.scale(GerenciadorImagens.loadImage("imagens/BombaFalse.png"), dimLargTela, dimAltTela);
 	}
 	
-	public void contadorBombas(Jogo jogo, Graphics g) { //Atualizador do contador de bombas, até 199 bombas
+	public void contadorBombas(Jogo jogo, Graphics g) {
 		int aux = jogo.getContBomba();
 		if(aux >= 100 && aux <200) {
 			CarregadorNumImg(g,1, 75, 57);
@@ -84,7 +77,7 @@ public class Tabuleiro {
 		CarregadorNumImg(g,jogo.getContBomba(), 158, 57);
 	}
 	
-	public void CarregadorNumImg(Graphics g,int aux, int posx, int posy) { //Carrega o numero refente a uma centena/dezena/unidade
+	public void CarregadorNumImg(Graphics g,int aux, int posx, int posy) {
 		switch(aux){
 	     	case 1:
 	     		g.drawImage(num1, posx, posy, null);
@@ -120,26 +113,19 @@ public class Tabuleiro {
 		}
 	}
 	
-	public void draw(Graphics g, Jogo jogo, int altura, int largura, boolean condicaoAtual){ //Desenha o tablado
-		
+	public void draw(Graphics g, Jogo jogo, int altura, int largura)
+	{
 		contadorBombas(jogo, g);
-		if(!jogo.getAtivacao(x, y)) {  //Verifica se nao foi selecionado ainda
-			if(jogo.getFlag(x, y)) { //Verifica se tem flag
-				if(condicaoAtual) { //Verifica se o jogo acabou
-					if(!jogo.getBomba(x, y)) //Se a posicao com flag nao tiver bomba
-						g.drawImage(BombaFalse, x * largura + xAux, y*altura + yAux, null); //Insere Bomba cortada
-				}else {
-					g.drawImage(flagImg, x * largura + xAux, y*altura + yAux, null); //Insere Flag
-				}	
-			}
-			else g.drawImage(box, x * largura + xAux, y*altura + yAux, null); //Desenha um bloco normal
+		if(!jogo.getAtivacao(x, y)) 
+		{
+			if(jogo.getFlag(x, y)) g.drawImage(flagImg, x * largura + xAux, y*altura + yAux, null);
+			else g.drawImage(box, x * largura + xAux, y*altura + yAux, null);
 		}
-		else {
-			if(jogo.getBomba(x, y)) //Desenha se tem bomba
-				g.drawImage(bombImg, x * largura + xAux, y*altura + yAux, null);
-			else if(jogo.getQuantidadeBombas(x, y) == 0) //Expande 
-				 g.drawImage(vazio, x * largura + xAux, y*altura + yAux, null);
-			else //Desenha a quantidade de bombas ao redor				
+		else 
+		{
+			if(jogo.getBomba(x, y)) {; g.drawImage(bombImg, x * largura + xAux, y*altura + yAux, null);}
+			else 
+			{				
                 switch(jogo.getQuantidadeBombas(x, y)){
                 	case 1:
                 		g.drawImage(numero1, x * largura + xAux, y*altura + yAux, null);
@@ -169,10 +155,11 @@ public class Tabuleiro {
         				g.drawImage(openedBox, x * largura + xAux, y*altura + yAux, null);
 
                  }
+			}
 		}
 	}
 	
-	public void localizacaoBotao(Graphics g, Jogo jogo, int altura, int largura) { //De acordo com a posicao do cursor ou das setas dá destaque a ela
+	public void localizacaoBotao(Graphics g, Jogo jogo, int altura, int largura) {
 		if(!jogo.getAtivacao(x, y)) 
 		{
 			if(jogo.getFlag(x, y)) g.drawImage(flagImgEncima, x * largura + xAux, y*altura + yAux, null);

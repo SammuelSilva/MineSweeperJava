@@ -9,7 +9,7 @@ public class Main implements Runnable {
 
     @Override
     public void run() {            
-    	intfc.repaint(); //Desenha a interface e começa o Bebe
+    	intfc.repaint();
     }
     
 }
